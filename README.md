@@ -17,16 +17,18 @@ Easy configuration web interface fost ESP8266 based on jquery mobile
 9. Upload new sketch using OTA
 
 ## Configuration 
-1. To change the username, password, WIFI and AP name please connect to http://<esp_ip>/
-2. To edit files stored in FS http://<esp_ip>/edit
+1. To change the username, password, WIFI and AP name please connect to http://esp_ip/
+2. To edit files stored in FS http://esp_ip/edit
 
 #### File gpio.txt 
 Default values for Itead Sonoff https://www.itead.cc/sonoff-wifi-wireless-switch.html :
 
 [
-  {"gpio":  "0","name": "Button GPIO 0","mode": "3","active": "AL","min": "0","max": "1"},
-  {"gpio": "12","name": "Relay","mode": "1", "active": "AH"},
-  {"gpio": "13","name": "Led","mode": "1", "active": "AL"}
+
+	{"gpio":  "0","name": "Button GPIO 0","mode": "3","active": "AL","min": "0","max": "1"},
+	{"gpio": "12","name": "Relay","mode": "1", "active": "AH"},
+	{"gpio": "13","name": "Led","mode": "1", "active": "AL"}
+	
 ]
 
 * gpio: GPIO nummber

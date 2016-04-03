@@ -2,8 +2,8 @@
 Easy configuration web interface fost ESP8266 based on jquery mobile
 
 # Minimum requirements
-ESP8266 with 1Mb Eeprom
-In Arduino IDe / Tools / Flash Size - select 1Mb (256Kb SPIFFS)
+ESP8266 with 1Mb Eprom
+Arduino IDE / Tools / Flash Size - select 1Mb (256Kb SPIFFS)
 
 # Instalation
 1. Upload the sketch
@@ -14,6 +14,7 @@ In Arduino IDe / Tools / Flash Size - select 1Mb (256Kb SPIFFS)
 6. Goto wireless setup, select your WIFI AP name and type your password
 7. Press the commit button
 8. After reboot ESP will connect top your WIFI - check Network neighborhood to find your ESP
+9. Upload new sketch using OTA
 
 # Configuration 
 1. To change the username, password, WIFI and AP name please connect to http://<esp_ip>/

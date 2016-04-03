@@ -1,2 +1,47 @@
 # ESP8266-Easy-config
-Easy configuration web interface fost ESP8266
+Easy configuration web interface fost ESP8266 based on jquery mobile
+
+# Minimum requirements
+ESP8266 with 1Mb Eeprom
+In Arduino IDe / Tools / Flash Size - select 1Mb (256Kb SPIFFS)
+
+# Instalation
+1. Upload the sketch
+2. After the first boot keep the GPIO0 button press for 5 seconds
+3. A new wireless AP named ESP - <sn> will appear 
+4. After first connection upload the files into DATA folder using: upload.bat 172.31.31.1
+5. Open http://172.31.31.1 in your browser - default username/password is: admin/admin
+6. Goto wireless setup, select your WIFI AP name and type your password
+7. Press the commit button
+8. After reboot ESP will connect top your WIFI - check Network neighborhood to find your ESP
+
+# Configuration 
+1. To change the username, password, WIFI and AP name please connect to http://<esp_ip>/
+2. To edit files stored in FS http://<esp_ip>/edit
+
+# File gpio.txt (default values for Itead Sonoff https://www.itead.cc/sonoff-wifi-wireless-switch.html) :
+[
+  {"gpio":  "0","name": "Button GPIO 0","mode": "3","active": "AL","min": "0","max": "1"},
+  {"gpio": "12","name": "Relay","mode": "1", "active": "AH"},
+  {"gpio": "13","name": "Led","mode": "1", "active": "AL"}
+]
+
+gpio: GPIO nummber
+name: friendly name for web interface
+mode: 0 - input, 1 - output, 3 - input display grafic
+active: AL - active low, AH - active high (for output mode only)
+min: minimum display value - for mode 3 only
+max: maximum display value - for mode 3 only
+
+# File ssdp.txt :
+{
+  "Name": "ESP",
+  "ModelName": "Your model here",
+  "ModelNumber": "001",
+  "ModelURL": "http://www.example.com/model",
+  "Manufacturer": "Your name Here",
+  "ManufacturerURL": "http://www.example.com"
+}
+
+
+

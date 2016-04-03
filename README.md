@@ -2,8 +2,8 @@
 Easy configuration web interface fost ESP8266 based on jquery mobile
 
 ## Minimum requirements
-ESP8266 with 1Mb Eprom
-Arduino IDE / Tools / Flash Size - select 1Mb (256Kb SPIFFS)
+* ESP8266 with 1Mb Eprom
+* Arduino IDE / Tools / Flash Size - select 1Mb (256Kb SPIFFS)
 
 ## Instalation
 1. Upload the sketch
@@ -21,18 +21,23 @@ Arduino IDE / Tools / Flash Size - select 1Mb (256Kb SPIFFS)
 2. To edit files stored in FS http://<esp_ip>/edit
 
 #### File gpio.txt (default values for Itead Sonoff https://www.itead.cc/sonoff-wifi-wireless-switch.html) :
+
 [
+
   {"gpio":  "0","name": "Button GPIO 0","mode": "3","active": "AL","min": "0","max": "1"},
+  
   {"gpio": "12","name": "Relay","mode": "1", "active": "AH"},
+  
   {"gpio": "13","name": "Led","mode": "1", "active": "AL"}
+  
 ]
 
-gpio: GPIO nummber
-name: friendly name for web interface
-mode: 0 - input, 1 - output, 3 - input display grafic
-active: AL - active low, AH - active high (for output mode only)
-min: minimum display value - for mode 3 only
-max: maximum display value - for mode 3 only
+* gpio: GPIO nummber
+* name: friendly name for web interface
+* mode: 0 - input, 1 - output, 3 - input display grafic
+* active: AL - active low, AH - active high (for output mode only)
+* min: minimum display value - for mode 3 only
+* max: maximum display value - for mode 3 only
 
 #### File ssdp.txt :
 {

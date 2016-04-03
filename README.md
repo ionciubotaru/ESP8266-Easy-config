@@ -39,12 +39,18 @@ Default values for Itead Sonoff https://www.itead.cc/sonoff-wifi-wireless-switch
 * max: maximum display value - for mode 3 only
 
 #### File ssdp.txt :
-{<enter>
+{
+
   "Name": "ESP",
+  
   "ModelName": "Your model here",
+
   "ModelNumber": "001",
+
   "ModelURL": "http://www.example.com/model",
+
   "Manufacturer": "Your name Here",
+
   "ManufacturerURL": "http://www.example.com"
 
 }

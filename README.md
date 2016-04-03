@@ -50,11 +50,11 @@ Default values for Itead Sonoff https://www.itead.cc/sonoff-wifi-wireless-switch
 
 }
 
-## To do:
+### To do:
 
 1. Add MQTT support
 2. Add Thingspeak support https://thingspeak.com/
-3. Adapt web interface for MQTT and thingsspeak
+3. Adapt web interface for MQTT and thingspeak
 
 
 

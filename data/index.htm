@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/jquery.mobile-1.4.5.min.css">
+  <script src="/jquery-1.11.1.min.js"></script>
+  <script src="/jquery.mobile-1.4.5.min.js"></script>
+  <style>
+    .center {  
+          text-align:center !important;
+     }
+    .save {
+      background: lightblue !important;
+    }
+    .ui-block-a, .ui-block-c {
+      width: 47% !important;
+    }
+    .ui-block-b {
+      width: 6% !important;
+    }
+    .containing-element .ui-slider-switch { 
+      width: 50%;
+    }
+    .device-a {
+      margin-top: 15px !important;
+      width: 24% !important;
+    }
+    .device-c {
+      width: 70% !important;
+    }
+  </style>
+</head>
+<body>
+
+<div data-role="page" id="pageLogin">
+  <div data-role="header">
+    <h1>ESP easy config</h1>
+  </div>
+  <div data-role="main" class="ui-content">
+    <form>
+      <div class="ui-field-contain">
+        <input type="text" name="user" placeholder="User name">       
+        <input type="password" name="password" placeholder="Password">
+      </div>
+      <button class="save" type="button">Log in</button>
+    </form>
+  </div>
+</div> 
+
+<div data-role="page" id="page2">
+  <div data-role="header">
+    <a title="Back" href="#" data-rel="back" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext ui-state-disabled"></a>
+    <h1>ESP easy config</h1>
+    <a title="Log out" href="#" class="ui-btn ui-corner-all ui-icon-home ui-btn-icon-notext logout"></a>
+  </div>
+  <div data-role="main" class="ui-content">
+    <a href="#pageStatus" class="ui-btn ui-icon-eye ui-btn-icon-left">Status</a>
+    <a href="#pageWIFI" class="ui-btn ui-icon-gear ui-btn-icon-left" >Wifi Settings</a>
+    <a href="#pageDevice" class="ui-btn ui-icon-bars ui-btn-icon-left" >Device Settings</a>
+    <a href="#" id="buttonCommit" class="ui-btn ui-btn-b ui-icon-alert ui-btn-icon-left">Commit changes</a>
+  </div>
+</div> 
+
+<div data-role="page" id="pageDevice">
+  <div data-role="header">
+    <a title="Back" href="#page2" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext"></a>
+    <h1>ESP easy config<br />WIFI setup</h1>
+    <a title="Log out" href="#" class="ui-btn ui-corner-all ui-icon-home ui-btn-icon-notext logout"></a>
+  </div>
+  <div data-role="main" class="ui-content" style="display: none;">
+    <form>
+      <fieldset class="ui-grid-c">
+        <div class="ui-block-a device-a">Login name:</div>
+        <div class="ui-block-b"></div>
+        <div class="ui-block-c device-c"><input name="uName" placeholder="User name"></div>
+      </fieldset>
+      <fieldset class="ui-grid-c">
+        <div class="ui-block-a device-a">password:</div>
+        <div class="ui-block-b"></div>
+        <div class="ui-block-c device-c"><input type="password" name="uPass" placeholder="User password"></div>
+      </fieldset>
+      <fieldset class="ui-grid-c">
+        <div class="ui-block-a device-a">Ap name:</div>
+        <div class="ui-block-b"></div>
+        <div class="ui-block-c device-c"><input name="apName" placeholder="AP name"></div>
+      </fieldset>
+      <fieldset class="ui-grid-c">
+        <div class="ui-block-a device-a">password:</div>
+        <div class="ui-block-b"></div>
+        <div class="ui-block-c device-c"><input type="password" name="apPass" placeholder="AP password"></div>
+      </fieldset>
+      <fieldset class="ui-grid-c">
+        <div class="ui-block-a"><button class="save" type="button">Save</button></div>
+        <div class="ui-block-b"></div>
+        <div class="ui-block-c"><a href="#page2" class="ui-btn">Cancel</a></div>
+      </fieldset>
+    </form>
+  </div>
+</div> 
+
+<div data-role="page" id="pageWIFI">
+  <div data-role="header">
+    <a title="Back" href="#page2" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext"></a>
+    <h1>ESP easy config<br />WIFI setup</h1>
+    <a title="Log out" href="#" class="ui-btn ui-corner-all ui-icon-home ui-btn-icon-notext logout"></a>
+  </div>
+  <div data-role="main" class="ui-content" style="display: none;">
+    <form>
+      <fieldset class="ui-grid-b">
+        <div class="ui-block-a" style="width: 80% !important;"><select name="wifi" id="wifi"></select></div>
+        <div class="ui-block-b"></div>
+        <div class="ui-block-c" style="width: 14%! important;"><a href="#" id="refreshWIFI" data-role="button" data-icon="refresh" class="ui-corner-all">&nbsp;</a></div>
+      </fieldset>
+      <input type="password" name="pass1" placeholder="Password">
+      <fieldset class="ui-grid-b">
+        <div class="ui-block-a"><button class="save" type="button">Save</button></div>
+        <div class="ui-block-b"></div>
+        <div class="ui-block-c"><a href="#page2" class="ui-btn">Cancel</a></div>
+      </fieldset>
+    </form>
+  </div>
+</div> 
+
+<div data-role="page" data-dialog="true" id="pageError">
+  <div data-role="header">
+    <h1 id="error1"></h1>
+  </div>
+  <div data-role="main" class="ui-content">
+    <p id="error2" style="text-align:center;"></p>
+    <a id="error3" href="#" data-rel="back" class="ui-btn"></a>
+  </div>
+</div> 
+
+<div data-role="page" id="pageStatus">
+  <div data-role="header">
+    <a title="Back" href="#page2" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext"></a>
+    <h1>ESP easy config<br />Device status</h1>
+    <a title="Log out" href="#" class="ui-btn ui-corner-all ui-icon-home ui-btn-icon-notext logout"></a>
+  </div>
+  <div data-role="main" class="ui-content">
+    <div id="btn-GPIO"></div>
+  </div>
+</div> 
+
+<div data-role="page" id="pageGPIO">
+  <div data-role="header">
+    <a title="Back" href="#pageStatus" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext"></a>
+    <h1>ESP easy config<br />GPIO status</h1>
+    <a title="Log out" href="#" class="ui-btn ui-corner-all ui-icon-home ui-btn-icon-notext logout"></a>
+  </div>
+  <div data-role="main" class="ui-content center" style="display: none;">
+    <h1  id="GPIO-h"></h1>
+    <div class="containing-element">
+    	<select id="GPIO-slider" data-role="slider">
+    		<option value="0">Off</option>
+    		<option value="1">On</option>
+    	</select>
+    </div>
+  </div>
+</div> 
+
+<div data-role="page" id="pageGraph">
+  <div data-role="header">
+    <a title="Back" href="#pageStatus" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext"></a>
+    <h1>ESP easy config<br />GPIO status</h1>
+    <a title="Log out" href="#" class="ui-btn ui-corner-all ui-icon-home ui-btn-icon-notext logout"></a>
+    <script type="text/javascript" src="graphs.js"></script>
+  </div>
+  <div data-role="main" class="ui-content center">
+    <fieldset class="ui-grid-c">
+      <div class="ui-block-a" style="width: 25% !important; margin-top: 19px !important;">
+        <label>Period (ms):</label>
+      </div>
+      <div class="ui-block-b" style="width: 25% !important; margin-top: 4px !important;">
+        <input type="number" id="refresh-rate" value="1000"/>
+      </div>
+      <div class="ui-block-c" style="width: 25% !important;">
+        <input type="button" id="start-button" value="Start"/>
+      </div>
+      <div class="ui-block-d" style="width: 25% !important;">
+        <input type="button" id="stop-button" value="Stop"/>
+      </div>
+    </fieldset>
+    <div id="analog"></div>
+  </div>
+</div> 
+
+<script>
+  errorMessage=["","",""];
+  selectedGPIO=["","","","","",""];
+  gpios=false;
+  gpioLastValue='';
+  ajax=false;
+  temp='';
+  reloadPeriod = 1000;
+  running = false;
+  sess='';
+  commit = false;
+  function wifiDropDown() {
+    $("#pageWIFI div.ui-content").hide();
+    $.mobile.loading('show');
+    $('#wifi').empty();
+    $.ajax({url: "/save", type: 'POST', data: { page: "getWIFI", sess: sess}, 
+      success: function(result){
+        $('#wifi').empty();
+        $('#wifi').append('<option value="0" class="dropDownBlk">Select AP</option>');
+        pass='';
+        $.each(result, function(i,wifi){
+          $('#wifi').append('<option value="'+(i+1)+'" class="dropDownBlk" name="'+wifi.wifi+'" enc="'+wifi.enc+'"'+
+            ((wifi.def == '1') ? 'selected' : '')+'>'+wifi.wifi+
+            ((wifi.enc == '0') ? ' (unsecured)' : '')+'</option>');
+          if (wifi.def == '1' && wifi.enc == '1') {
+            pass=wifi.pass;
+          }
+        });
+        $("#wifi").trigger("change");
+        $('input[name="pass1"]').val(pass);
+        $("#pageWIFI div.ui-content").show();
+        $.mobile.loading('hide');
+      },
+      error: function(result) {
+        window.location.href = '#pageLogin';
+      }            
+    })
+  }
+  function invalidConnection() {
+    errorMessage=["Error","Connection to server was lost !<br />Please check if your device is properly inslalled.","Please try again"];
+    window.location.href = '#pageError';
+  }
+  function gpioRefresh() {
+    if (selectedGPIO[0] != '') {
+      if (ajax) return;
+      ajax=true;
+      $.ajax({url: "/save", type: 'POST', data: { page: "pageGPIO", gpio: selectedGPIO[0], sess: sess}, timeout: 1700,
+        success: function(result){
+          value=result.value;
+          if ($("#GPIO-slider").val() != value || gpioLastValue=='') {
+            $('#GPIO-h').html(selectedGPIO[2]);
+            $("#GPIO-slider").slider(selectedGPIO[1] == '0' ? 'disable' : 'enable');
+            $("#GPIO-slider").val(value).slider("refresh");
+            $("#GPIO-slider").change(function() {
+              currentValue = $("#GPIO-slider").val();
+              if (gpioLastValue != currentValue) {
+                if (ajax) return;
+                ajax=true;
+                $.ajax({url: "/save", type: 'POST', data: { page: "changeGPIO", gpio: selectedGPIO[0], value: currentValue, sess: sess}, timeout: 1700,
+                  success: function(result) {
+                    gpioLastValue=result.value;
+                    ajax=false;
+                  },            
+                  error: function(result) {
+                    gpioLastValue='';
+                    ajax=false;
+                  }            
+                })
+              }
+            })
+          }
+          $("#pageGPIO div.ui-content").show();
+          $.mobile.loading('hide');
+          ajax=false;
+        },
+        error: function(result) {
+          gpioLastValue='';
+          ajax=false;
+        }            
+      })
+    } else {
+      window.location.href = '#pageStatus';
+    }
+  }
+  $(document).on("pagechange",function(event){
+    if ($(".ui-page-active").attr("id") == "pageLogin") {
+      sess='';
+      $('input[name="password"]').val('');
+      return;
+    }
+    if (sess == '' && $(".ui-page-active").attr("id") != "pageError") {
+      window.location.href = '#pageLogin';
+      return;
+    }
+    if ($(".ui-page-active").attr("id") == "page2") {
+      if (commit) {
+        $("#buttonCommit").show();
+      } else {
+        $("#buttonCommit").hide();
+      }
+    } else if ($(".ui-page-active").attr("id") == "pageStatus") {
+      if (!gpios) {
+        vhtml = '';
+        $.mobile.loading('show');
+        $.ajax({url: "/save", type: 'POST', data: { page: "pageStatus", sess: sess}, 
+          success: function(result){
+            gpios=true;
+            $.each(result, function(i,gpio){
+              vhtml += '<a href="#" gpio="'+gpio.gpio+'" mode="'+gpio.mode+'" act="'+gpio.active+'" min="'+gpio.min+'" max="'+gpio.max+'" class="ui-btn gpio"> '+gpio.name+'</a>';
+            })
+            $('#btn-GPIO').html(vhtml);
+            $(".gpio").click(function(){
+              selectedGPIO=[$(this).attr("gpio"),$(this).attr("mode"),$(this).text(),$(this).attr("act"),$(this).attr("min"),$(this).attr("max")];
+              window.location.href = ($(this).attr("mode")=="3") ? '#pageGraph' : '#pageGPIO';
+            });
+            $.mobile.loading('hide');
+          },
+          error: function(result) {
+            window.location.href = '#pageLogin';
+          }            
+        })
+      }
+    } else if ($(".ui-page-active").attr("id") == "pageGPIO") {
+      gpioLastValue='';
+      $.mobile.loading('show');
+      gpioRefresh();
+    } else if ($(".ui-page-active").attr("id") == "pageWIFI") {
+      $('input[name="pass1"]').val('');
+      wifiDropDown();
+      $("#refreshWIFI").click(function(){wifiDropDown()});
+      $("#wifi").change(function() {
+        $('input[name="pass1"]').val('');
+        wifi = $("#wifi :selected").val();
+        enc = $("#wifi :selected").attr("enc");
+        if (enc == '0') {
+          $('input[name="pass1"]').hide();
+        } else {
+          $('input[name="pass1"]').show();
+        }
+        $( ".save" ).prop( "disabled", (wifi == '0' ));
+      });
+    } else if ($(".ui-page-active").attr("id") == "pageDevice") {
+      $('input[name="uName"],input[name="uPass"],input[name="apName"],input[name="apPass"]').val('');
+      $.mobile.loading('show');
+      $.ajax({url: "/save", type: 'POST', data: { page: "getDevice", sess: sess}, 
+        success: function(result){
+          $('input[name="uName"]').val(result.uName);
+          $('input[name="uPass"]').val(result.uPass);
+          $('input[name="apName"]').val(result.apName);
+          $('input[name="apPass"]').val(result.apPass);
+          $("#pageDevice div.ui-content").show();
+          $.mobile.loading('hide');
+        },
+        error: function(result) {
+          window.location.href = '#pageLogin';
+        }            
+      })
+    } else if ($(".ui-page-active").attr("id") == "pageError") {
+      $('#error1').html(errorMessage[0]);
+      $('#error2').html(errorMessage[1]);
+      $('#error3').html(errorMessage[2]);
+    } else if ($(".ui-page-active").attr("id") == "pageGraph") {
+      if (selectedGPIO[0] == '') {
+        window.location.href = '#pageStatus';
+        return
+      }
+      $("#refresh-rate").change(function() {
+        refresh = $(this).val();
+        reloadPeriod = (refresh > 0) ? refresh : 0;
+        $(this).val(reloadPeriod);
+      })
+      $("#start-button").click(function(){run();});
+      $("#stop-button").click(function(){running = false;});
+      temp = createGraph(document.getElementById("analog"), "Last input val.", $(window).width()-100, $(window).height()-250, parseInt(selectedGPIO[4]), parseInt(selectedGPIO[5]), false, "cyan");
+      run();
+    }
+  });
+  $(document).on("pagebeforehide",function(event){
+     if ($(".ui-page-active").attr("id") == "pageGPIO") {
+      gpioLastValue='';
+      ajax=false;
+      $("#pageGPIO div.ui-content").hide();
+    } else if ($(".ui-page-active").attr("id") == "pageGraph") {
+      running = false;
+      selectedGPIO=["","","","","",""];
+      $("#analog").html('');
+    } else if ($(".ui-page-active").attr("id") == "pageWIFI") {
+      $("#pageWIFI div.ui-content").hide();
+    } else if ($(".ui-page-active").attr("id") == "pageDevice") {
+      $("#pageDevice div.ui-content").hide();
+    } else if ($(".ui-page-active").attr("id") == "pageLogin") {
+      $('input[name="password"]').val('');
+      $("#buttonCommit").hide();
+    }
+    ajax=false;
+  })
+  $(".save").click(function(){
+    if ($(".ui-page-active").attr("id") == "pageLogin") {
+      $.ajax({url: "/save", type: 'POST', data: { page: $(".ui-page-active").attr("id"), user: $('input[name="user"]').val(), pass: $('input[name="password"]').val()}, 
+        success: function(result){
+          if (result.error == '1') {
+            sess='';
+            errorMessage=["Invalid credentials","Invalid username or password.<br />Default username/password: <b>admin</b>/<b>admin</b>.","Please try again"];
+            window.location.href = '#pageError';
+          } else {
+            sess=result.sess;
+            window.location.href = '#page2';
+          }
+        },
+        error: function(result){invalidConnection()}
+      })
+    } else if ($(".ui-page-active").attr("id") == "pageWIFI") {
+      password = $('input[name="pass1"]').val();
+      enc = $("#wifi :selected").attr("enc");
+      if (password == '' && enc == '1') {
+        errorMessage=["Invalid password","The password cannot be blank.","Please try again"];
+        window.location.href = '#pageError';
+        return;
+      } else if (password != '' && enc == '0') {
+        errorMessage=["Invalid password","The password must be blank.","Please try again"];
+        window.location.href = '#pageError';
+        return;
+      } else if (password.length > 30 ) {
+        errorMessage=["Invalid password","The password too long.","Please try again"];
+        window.location.href = '#pageError';
+        return;
+      }
+      wifi  = $("#wifi :selected").attr("name");
+      $.ajax({url: "/save", type: 'POST', data: { page: $(".ui-page-active").attr("id"), ssid: wifi, pass: password, sess: sess},
+        success: function(result){
+          commit=true;
+          window.location.href = '#page2'
+        },
+        error: function(result){invalidConnection()}
+      })
+    } else if ($(".ui-page-active").attr("id") == "pageDevice") {
+      uName = $('input[name="uName"]').val();
+      if (uName == '') {
+        errorMessage=["Invalid user name","The user name cannot be blank.","Please try again"];
+        window.location.href = '#pageError';
+        return;
+      } else if (uName.length > 50 ) {
+        errorMessage=["Invalid user name","The name is too long.","Please try again"];
+        window.location.href = '#pageError';
+        return;
+      }
+      uPass = $('input[name="uPass"]').val();
+      if (uPass == '') {
+        errorMessage=["Invalid user password","The user password cannot be blank.","Please try again"];
+        window.location.href = '#pageError';
+        return;
+      } else if (uPass.length > 50 ) {
+        errorMessage=["Invalid user password","The password is too long.","Please try again"];
+        window.location.href = '#pageError';
+        return;
+      }
+      apName = $('input[name="apName"]').val();
+      if (apName == '') {
+        errorMessage=["Invalid AP name","The AP name cannot be blank.","Please try again"];
+        window.location.href = '#pageError';
+        return;
+      } else if (apName.length > 50 ) {
+        errorMessage=["Invalid AP name","The AP mane is too long.","Please try again"];
+        window.location.href = '#pageError';
+        return;
+      }
+      apPass = $('input[name="apPass"]').val();
+      if ((apPass.length < 8 || apPass.length > 50) &&  apPass.length > 0) {
+        errorMessage=["Invalid AP password","The password must be between 8 and 50 characters long.","Please try again"];
+        window.location.href = '#pageError';
+        return;
+      }
+      $.ajax({url: "/save", type: 'POST', data: { page: $(".ui-page-active").attr("id"), uName: uName, uPass: uPass, apName: apName, apPass: apPass, sess: sess},
+        success: function(result){
+          commit=true;
+          window.location.href = '#page2'
+        },
+        error: function(result){invalidConnection()}
+      })
+    }
+  });
+  $("#buttonCommit").click(function(){
+    $.ajax({url: "/save", type: 'POST', data: { page: "commit", sess: sess},
+      success: function(result){
+        $.mobile.loading('show');
+        commit=false;
+        sess='';
+        delay();
+      },
+      error: function(result){invalidConnection()}
+    })
+  });
+  $(".logout").click(function(){
+    commit=false;
+    sess='';
+    window.location.href = '#pageLogin'
+  });
+  function delay() {
+    setTimeout(function(){ 
+      window.location.href = '/';
+    }, 5000);  
+  }
+  setInterval(function(){
+    if ($(".ui-page-active").attr("id") == "pageGPIO") gpioRefresh();
+  },3000);
+  function run(){
+    if(!running){
+      running = true;
+      loadValues();
+    }
+  }
+  function loadValues(){
+    if(!running) return;
+    $.ajax({url: "/save", 'type': 'POST', data: { 'page': 'pageGraph', 'gpio': selectedGPIO[0], sess: sess}, 
+      success: function(result){
+        temp.add(result.value);
+        if(running) setTimeout(loadValues, reloadPeriod);
+      },
+      error: function(result){running = false}
+    });
+  }
+</script>
+</body>
+</html>

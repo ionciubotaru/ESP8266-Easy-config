@@ -1,0 +1,5 @@
+[
+  {"gpio":  "0","name": "Button GPIO 0","mode": "3","active": "AL","min": "0","max": "1"},
+  {"gpio": "12","name": "Relay","mode": "1", "active": "AH"},
+  {"gpio": "13","name": "Led","mode": "1", "active": "AL"}
+]

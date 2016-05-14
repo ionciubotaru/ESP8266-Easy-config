@@ -1,1 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+	var mqttBase		   = "easyESP2016";
+	var mqttBrokerURI      = "ws://test.mosquitto.org:8080/";
+//    var mqttUsername       = "";
+//    var mqttPassword       = "";
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+	<script src="js/jquery-1.11.1.min.js"></script>
+	<script src="js/jquery.mobile-1.4.5.min.js"></script>  
+	<script src="js/mqttws31.js"></script>
+	<style>
+    .center {  
+          text-align:center !important;
+     }
+    .save {
+      background: lightblue !important;
+    }
+    .ui-block-a, .ui-block-c {
+      width: 47% !important;
+    }
+    .ui-block-b {
+      width: 6% !important;
+    }
+    .containing-element .ui-slider-switch { 
+      width: 50%;
+    }
+    .device-a {
+      margin-top: 15px !important;
+      width: 24% !important;
+    }
+    .device-c {
+      width: 70% !important;
+    }
+  </style>
+</head>
+<body>
 
+<div data-role="page" id="pageDevices">
+  <div data-role="header">
+    <h1>ESP easy config<br />Devices</h1>
+  </div>
+  <div data-role="main" class="ui-content">
+    <div id="btn-devices"></div>
+  </div>
+</div> 
+
+<div data-role="page" id="pageStatus">
+  <div data-role="header">
+    <a title="Back" href="#pageDevices" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext"></a>
+    <h1>ESP easy config<br />Device status</h1>
+  </div>
+  <div data-role="main" class="ui-content">
+    <div id="btn-GPIO"></div>
+  </div>
+</div> 
+
+<div data-role="page" data-dialog="true" id="pageError">
+  <div data-role="header">
+    <h1 id="error1"></h1>
+  </div>
+  <div data-role="main" class="ui-content">
+    <p id="error2" style="text-align:center;"></p>
+    <a id="error3" href="#" data-rel="back" class="ui-btn"></a>
+  </div>
+</div> 
+
+<div data-role="page" id="pageGPIO">
+  <div data-role="header">
+    <a title="Back" href="#pageStatus" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext"></a>
+    <h1>ESP easy config<br />GPIO status</h1>
+  </div>
+  <div data-role="main" class="ui-content center" style="display: none;">
+    <h1  id="GPIO-h"></h1>
+    <div class="containing-element">
+    	<select id="GPIO-slider" data-role="slider">
+    		<option value="0">Off</option>
+    		<option value="1">On</option>
+    	</select>
+    </div>
+  </div>
+</div> 
+
+<div data-role="page" id="pageGraph">
+  <div data-role="header">
+    <a title="Back" href="#pageStatus" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext"></a>
+    <h1>ESP easy config<br />GPIO status</h1>
+    <script type="text/javascript" src="js/graphs.js"></script>
+  </div>
+  <div data-role="main" class="ui-content center">
+    <fieldset class="ui-grid-c">
+      <div class="ui-block-a" style="width: 25% !important; margin-top: 19px !important;">
+        <label>Period (ms):</label>
+      </div>
+      <div class="ui-block-b" style="width: 25% !important; margin-top: 4px !important;">
+        <input type="number" id="refresh-rate" value="1000"/>
+      </div>
+      <div class="ui-block-c" style="width: 25% !important;">
+        <input type="button" id="start-button" value="Start"/>
+      </div>
+      <div class="ui-block-d" style="width: 25% !important;">
+        <input type="button" id="stop-button" value="Stop"/>
+      </div>
+    </fieldset>
+    <div id="analog"></div>
+  </div>
+</div> 
+
+<script>
+  devices=[];
+  errorMessage=["","",""];
+  selectedGPIO=["","","","","",""];
+  selectedDevice=0;
+  temp='';
+  reloadPeriod = 1000;
+  running = false;
+  function invalidConnection() {
+    errorMessage=["Error","Connection to server was lost !<br />Please check if your device is properly inslalled.","Please try again"];
+    window.location.href = '#pageError';
+  }
+  $(document).on("pagechange",function(event){
+    if ($(".ui-page-active").attr("id") != "pageDevices" && devices.length == 0) {
+      window.location.href = '#pageDevices';
+      return;
+    } else if ($(".ui-page-active").attr("id") == "pageStatus" && devices.length > 0) {
+      if (devices[selectedDevice].gpios.length == 0) {
+        window.location.href = '#pageDevices';
+        return;
+      }
+      $("#pageStatus h1.ui-title").html('ESP easy config<br />Device status<br />'+devices[selectedDevice].name+' - '+devices[selectedDevice].id)
+      vhtml='';
+      $.each(devices[selectedDevice].gpios, function(i,gpio){
+        vhtml += '<a href="#" gpio="'+gpio.gpio+'" mode="'+gpio.mode+'" act="'+gpio.active+'" min="'+gpio.min+'" max="'+gpio.max+'" class="ui-btn gpio"> '+gpio.name+'</a>';
+      })
+      $('#btn-GPIO').html(vhtml);
+      $(".gpio").click(function(){
+        selectedGPIO=[$(this).attr("gpio"),$(this).attr("mode"),$(this).text(),$(this).attr("act"),$(this).attr("min"),$(this).attr("max")];
+        window.location.href = ($(this).attr("mode")=="3") ? '#pageGraph' : '#pageGPIO';
+      });
+    } else if ($(".ui-page-active").attr("id") == "pageGPIO") {
+      $.mobile.loading('show');
+      publish(devices[selectedDevice].id+'/in/I', selectedGPIO[0]);
+      $('#GPIO-h').html(selectedGPIO[2]);
+      $("#GPIO-slider").change(function() {
+        currentValue = AL($("#GPIO-slider").val());
+        publish(devices[selectedDevice].id+'/in/O/'+selectedGPIO[0], currentValue);
+      })
+    } else if ($(".ui-page-active").attr("id") == "pageError") {
+      $('#error1').html(errorMessage[0]);
+      $('#error2').html(errorMessage[1]);
+      $('#error3').html(errorMessage[2]);
+    } else if ($(".ui-page-active").attr("id") == "pageGraph") {
+      if (selectedGPIO[0] == '') {
+        window.location.href = '#pageStatus';
+        return
+      }
+      $("#refresh-rate").change(function() {
+        refresh = $(this).val();
+        reloadPeriod = (refresh > 0) ? refresh : 0;
+        $(this).val(reloadPeriod);
+      })
+      $("#start-button").click(function(){run();});
+      $("#stop-button").click(function(){running = false;});
+      temp = createGraph(document.getElementById("analog"), "Last input val.", $(window).width()-100, $(window).height()-250, parseInt(selectedGPIO[4]), parseInt(selectedGPIO[5]), false, "cyan");
+      run();
+    }
+  });
+  $(document).on("pagebeforehide",function(event){
+    $("#GPIO-slider, #refresh-rate, #start-button, #stop-button, .gpio").unbind();
+    if ($(".ui-page-active").attr("id") == "pageStatus") {
+      $('#btn-GPIO').html('');
+    } else if ($(".ui-page-active").attr("id") == "pageGPIO") {
+      $("#pageGPIO div.ui-content").hide();
+      $('#GPIO-h').html('');
+    } else if ($(".ui-page-active").attr("id") == "pageGraph") {
+      running = false;
+      selectedGPIO=["","","","","",""];
+      $("#analog").html('');
+    }
+  })
+  function run(){
+    if(!running){
+      running = true;
+      loadValues();
+    }
+  }
+  function loadValues(){
+    if(!running) return;
+    $.ajax({url: "/save", 'type': 'POST', data: { 'page': 'pageGraph', 'gpio': selectedGPIO[0], sess: sess}, 
+      success: function(result){
+        temp.add(result.value);
+        if(running) setTimeout(loadValues, reloadPeriod);
+      },
+      error: function(result){running = false}
+    });
+  }
+  function AL(msg) {
+    msg1 = (msg == "1" ? "0" : "1");
+    return (selectedGPIO[3]=='AL' ? msg1 : msg)
+  }
+  client = new Paho.MQTT.Client(mqttBrokerURI, "browser-" + (new Date().getTime()));
+  client.onConnectionLost = onConnectionLost;
+  client.onMessageArrived = onMessageArrived;
+  client.connect({
+//    userName: mqttUsername,
+//    password: mqttPassword,
+    cleanSession: false,
+    onSuccess: onConnect
+  });
+  function onConnect() {
+    console.log("connected");
+    client.subscribe(mqttBase+"/+/name");
+    client.subscribe(mqttBase+"/+/gpio");
+    client.subscribe(mqttBase+"/+/status");
+    client.subscribe(mqttBase+"/+/A/+");
+  }
+  function onConnectionLost(responseObject) {
+    if (responseObject.errorCode !== 0) console.log("connection lost:" + responseObject.errorMessage);
+    location.reload();
+  }
+  function publish(topic, payload, qos = 0) {
+    console.log('Message send: '+topic+' '+payload);
+    message = new Paho.MQTT.Message(payload);
+    message.destinationName = mqttBase+"/"+topic;
+    message.qos = qos;
+    message.retained = (qos == 0 ? false : true);
+    client.send(message);
+  }
+  function onMessageArrived(message) {
+    console.log("new: " + message.destinationName + "/"+ message.payloadString);
+    topics=message.destinationName.split("/") 
+    i=0;
+    found=false;
+    for (i = 0; i < devices.length; i++) {
+      if (devices[i].id == topics[1]) {
+        found=true;
+        break;
+      }
+    }
+    if ($.inArray(topics[2], ["name","status","gpio"]) >= 0) {
+      if (!found) {
+        devices.push({id: topics[1]});
+        i=devices.length-1;
+      }
+      if (topics[2] == "name") {
+        devices[i].name=message.payloadString;
+      } else if (topics[2] == "status") {
+        devices[i].status=message.payloadString;
+        if ($(".ui-page-active").attr("id") != "pageDevices" && selectedDevice == i && devices[i].status == 0) window.location.href = '#pageDevices';
+      } else if (topics[2] == "gpio") {
+        devices[i].gpios=JSON.parse(message.payloadString);
+      }
+      vhtml='';
+      for (i = 0; i < devices.length; i++) {
+        vhtml += '<a href="#" id="'+i+'" class="ui-btn device '+( devices[i].status==0 ? 'ui-disabled' : '')+'" >'+devices[i].name+' - '+devices[i].id+'</a>';
+      }
+      $('#btn-devices').html(vhtml);
+      $(".device").click(function(){
+        selectedDevice=$(this).attr("id");
+        window.location.href = '#pageStatus';
+      });
+    } else if (found && selectedDevice == i) {
+      if (topics[2] == "A" && selectedGPIO[0]==topics[3] ) {
+        $("#GPIO-slider").val(AL(message.payloadString)).slider("refresh");
+        $("#pageGPIO div.ui-content").show();
+        $.mobile.loading('hide');
+      }
+    }
+  }
+</script>
+</body>
+</html>

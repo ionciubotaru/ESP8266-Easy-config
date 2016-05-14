@@ -6,15 +6,18 @@ Easy configuration web interface fost ESP8266 based on jquery mobile
 * Arduino IDE / Tools / Flash Size - select 1Mb (256Kb SPIFFS)
 
 ## Instalation
-1. Upload the sketch
-2. After the first boot keep the GPIO0 button press for 5 seconds
-3. A new wireless AP named ESP - <sn> will appear 
-4. After first connection upload the files into DATA folder using: upload.bat 172.31.31.1
-5. Open http://172.31.31.1 in your browser - default username/password is: admin/admin
-6. Goto wireless setup, select your WIFI AP name and type your password
-7. Press the commit button
-8. After reboot ESP will connect top your WIFI - check Network neighborhood to find your ESP
-9. Upload new sketch using OTA
+1. Install missing libraries:
+   * https://github.com/bblanchon/ArduinoJson
+   * https://github.com/Imroy/pubsubclient
+2. Upload the sketch
+3. After the first boot keep the GPIO0 button press for 5 seconds
+4. A new wireless AP named ESP - <sn> will appear 
+5. After first connection upload the files into DATA folder using: upload.bat 172.31.31.1
+6. Open http://172.31.31.1 in your browser - default username/password is: admin/admin
+7. Goto wireless setup, select your WIFI AP name and type your password
+8. Press the commit button
+9. After reboot ESP will connect top your WIFI - check Network neighborhood to find your ESP
+10. Upload new sketch using OTA
 
 ## Configuration 
 1. To change the username, password, WIFI and AP name please connect to http://esp_ip/
@@ -50,9 +53,19 @@ Default values for Itead Sonoff https://www.itead.cc/sonoff-wifi-wireless-switch
 
 }
 
+#### File mqtt.txt :
+{
+  "Base": "easyESP",
+  "Server": "test.mosquitto.org",
+  "Port": "1883",
+  "User": "",
+  "Pass": ""
+}
+The mosquitto server is public and open. Change the Base to your unique name to avoid interferances with other users.
+The base must be the same with the one specified in index.html from web folder.
+
 ### To do:
 
-1. Add MQTT support
 2. Add Thingspeak support https://thingspeak.com/
 3. Adapt web interface for MQTT and thingspeak
 

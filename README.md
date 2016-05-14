@@ -44,30 +44,40 @@ Default values for Itead Sonoff https://www.itead.cc/sonoff-wifi-wireless-switch
 #### File ssdp.txt :
 {
 
-  "Name": "ESP",
-  "ModelName": "Your model here",
-  "ModelNumber": "001",
-  "ModelURL": "http://www.example.com/model",
-  "Manufacturer": "Your name Here",
-  "ManufacturerURL": "http://www.example.com"
+	"Name": "ESP",
+	"ModelName": "Your model here",
+	"ModelNumber": "001",
+	"ModelURL": "http://www.example.com/model",
+	"Manufacturer": "Your name Here",
+	"ManufacturerURL": "http://www.example.com"
 
 }
 
 #### File mqtt.txt :
 {
-  "Base": "easyESP",
-  "Server": "test.mosquitto.org",
-  "Port": "1883",
-  "User": "",
-  "Pass": ""
+
+	"Base": "easyESP",
+	"Server": "test.mosquitto.org",
+	"Port": "1883",
+	"User": "",
+	"Pass": ""
+
 }
-The mosquitto server is public and open. Change the Base to your unique name to avoid interferances with other users.
+
+The mosquitto server is public and open. Change the "Base" to your unique name to avoid interferances with other users.
+
 The base must be the same with the one specified in index.html from web folder.
+
+#### WEB folder :
+
+Contains the pages used to control the ESP's from internet. 
+On mobile devices works fine on Opera and very recent version of Chrome mobile.
+On computer works fine on Chrome.
 
 ### To do:
 
-2. Add Thingspeak support https://thingspeak.com/
-3. Adapt web interface for MQTT and thingspeak
+1. Add Thingspeak support https://thingspeak.com/
+2. Create mobile aplication to control ESP's
 
 
 

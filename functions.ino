@@ -1,8 +1,10 @@
-void reset() {
-  httpServer.send(200, "text/html", "Rebooting .....");
-  Serial.println("Rebooting .....");
-  delay(1000);
-  ESP.restart();
+void mPublish(String mTopic, String mPayload, int mQos=0) {
+  if (hasMqtt) {
+    Serial.println("Publish: "+mqttBase+"/"+chipId+"/"+mTopic+" ~ "+mPayload+" qos: "+String(mQos));
+    mqttClient.publish(MQTT::Publish(mqttBase+"/"+chipId+"/"+mTopic, mPayload)
+                .set_retain(mQos == 0 ? false : true)
+                .set_qos(mQos));
+  }
 }
 
 void startWifi() {
@@ -27,7 +29,7 @@ void startWifi() {
       ssdp();
       SSDP.begin();
       wifiErrTick.detach();
-      digitalWrite(ErrorLed, HIGH);
+      digitalWrite(ErrorLed, LOW);
     } else {
       startAP();
     }
@@ -56,7 +58,6 @@ void checkClean() {
   if (digitalRead(0)==1) time2=millis();
   if (millis()>time2+5000) clearEeprom();
 }
-
 
 char rnd() {
   while (true) {
@@ -112,5 +113,29 @@ void writeDevice() {
   writeEeprom(50,50,uPass);
   writeEeprom(200,50,apName);
   writeEeprom(250,50,apPass);
+}
+
+String readGpioFile() {
+  File configFile = SPIFFS.open("/gpio.txt", "r");
+  String gpio="";
+  if (!configFile) {
+    Serial.println("Failed to open gpio file");
+  } else {
+    size_t size = configFile.size();
+    if (size > 1023) {
+      Serial.println("Config file too large");
+    } else {
+      gpio = configFile.readString();
+    }
+  }
+  configFile.close();
+  return gpio;
+}
+
+void rst() {
+  httpServer.send(200, "text/html", "Rebooting .....");
+  Serial.println("Rebooting .....");
+  delay(1000);
+  ESP.restart();
 }
 

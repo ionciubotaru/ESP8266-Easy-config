@@ -3,6 +3,7 @@ void loadConfig() {
     session += rnd();
   }
   Serial.println(session);
+  chipId = String(ESP.getChipId());
   EEPROM.begin(512);
   uName=readEeprom(0,50);
   uPass=readEeprom(50,50);
@@ -25,8 +26,9 @@ void configServer(){
   httpServer.on("/edit", HTTP_PUT, handleFileCreate);
   httpServer.on("/edit", HTTP_DELETE, handleFileDelete);
   httpServer.on("/edit", HTTP_POST, [](){ httpServer.send(200, "text/plain", ""); }, handleFileUpload);
+  httpServer.on("/save", HTTP_GET, handleSave);
   httpServer.on("/save", HTTP_POST, handleSave);
-  httpServer.on("/reset", HTTP_GET, reset);
+  httpServer.on("/reset", HTTP_GET, rst);
 //  httpServer.on("/clear", HTTP_GET, clearEeprom);
   httpServer.on("/description.xml", HTTP_GET, [](){ SSDP.schema(httpServer.client()); });
   httpServer.on("/all", HTTP_GET, graph);
@@ -44,13 +46,13 @@ void configServer(){
 }
 
 void ssdp() {
-  Serial.println("SSDP start");
   SSDP.setName("ESP");
   SSDP.setSchemaURL("description.xml");
   SSDP.setHTTPPort(80);
   SSDP.setURL("/");
   File ssdpFile = SPIFFS.open("/ssdp.txt", "r");
   if (ssdpFile) {
+    Serial.print("SSDP start ");
     size_t size = ssdpFile.size();
     if (size < 512) {
       std::unique_ptr<char[]> buf(new char[size]);
@@ -58,14 +60,12 @@ void ssdp() {
       StaticJsonBuffer<512> jsonBuffer;
       JsonObject& json = jsonBuffer.parseObject(buf.get());
       if (json.success()) {
-        const char* tmp = json["Name"];
-        String sir1 = String(ESP.getChipId());
-        String sir2 = String(tmp)+"-"+sir1;
+        String sir2 = apName + "-" + chipId;
         char sir3[sir2.length()+1];
         sir2.toCharArray(sir3, sir2.length()+1);
         SSDP.setName(sir2);
-        SSDP.setSerialNumber(sir1);
-        tmp = json["ModelName"];
+        SSDP.setSerialNumber(chipId);
+        const char* tmp = json["ModelName"];
         SSDP.setModelName(String(tmp).length()==0 ? "NOT set" : tmp);
         tmp = json["ModelNumber"];
         SSDP.setModelNumber(String(tmp).length()==0 ? "NOT set" : tmp);
@@ -75,8 +75,9 @@ void ssdp() {
         SSDP.setManufacturer(String(tmp).length()==0 ? "NOT set" : tmp);
         tmp = json["ManufacturerURL"];
         SSDP.setManufacturerURL(String(tmp).length()==0 ? "NOT set" : tmp);
-      }
-    }
+        Serial.println("succes");
+      } else Serial.println("fail");
+    } else Serial.println("fail");
   }
   ssdpFile.close();
 }

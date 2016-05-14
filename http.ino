@@ -24,6 +24,8 @@ void handleSave(){
     }
     return;
   }
+  customPageNoAuth();
+  if (hasCustomPage) return;
   if (httpServer.arg("sess") != session) {
     httpServer.send(404, "text/html", "Error");
     return;
@@ -50,19 +52,7 @@ void handleSave(){
     apPass = httpServer.arg("apPass");
     writeDevice();
   } else if (page == "pageStatus") { 
-    File configFile = SPIFFS.open("/gpio.txt", "r");
-    if (!configFile) {
-      Serial.println("Failed to open gpio file");
-    } else {
-      size_t size = configFile.size();
-      if (size > 1023) {
-        Serial.println("Config file too large");
-      } else {
-        String gpio = configFile.readString();
-        httpServer.send(200, "text/json", gpio);
-        return;
-      }
-    }
+    httpServer.send(200, "text/json", readGpioFile());
   } else if (page == "pageGPIO" or page == "pageGraph") { 
     int gpio = httpServer.arg("gpio").toInt();
     String val = (digitalRead(gpio)==0 ? "0" : "1" );
@@ -74,13 +64,15 @@ void handleSave(){
       int val = httpServer.arg("value").toInt();
       int val1=val;
       if (gpio == 13) val1 = (val==0 ? 1 : 0);
-      if (gpio != 0) {
-        pinMode(gpio, OUTPUT);
-        digitalWrite(gpio, val1);
-      }
+      gpioOut(gpio,val1);
       httpServer.send(200, "text/json", "{\"value\":\""+String(val==0 ? "0" : "1")+"\"}");
       return;
-  } else if (page == "commit") reset(); 
+  } else if (page == "commit") {
+    rst(); 
+  } else {
+    customPageAuth();
+    if (hasCustomPage) return;
+  }
   httpServer.send(200, "text/html", "Ok");
 }
 
@@ -105,8 +97,24 @@ String scanWifi() {
 void graph () {
   time1=millis();
   int gpio = httpServer.arg("gpio").toInt();
-  String val = (digitalRead(gpio)==0 ? "0" : "1" );
+  String val = gpioIn(gpio);
   String json = "{ \"analog\":\""+val+"\" }";
   httpServer.send(200, "text/json", json);
+}
+
+void gpioOut(uint8_t gpio, uint8_t val1) {
+  if (gpio != 0 and gpio <= 16 and (val1==0 or val1==1)) {
+    pinMode(gpio, OUTPUT);
+    digitalWrite(gpio, val1);
+    mPublish("A/"+String(gpio),String(val1));
+  } else {
+    Serial.println("Invalid GPIO request");
+    Serial.println(gpio);
+    Serial.println(val1);
+  }
+}
+
+String gpioIn(uint8_t gpio) {
+  return (digitalRead(gpio)==0 ? "0" : "1" );
 }
 

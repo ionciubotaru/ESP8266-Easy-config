@@ -38,5 +38,8 @@ ping 1.1.1.1 -n 1 -w 1000 > nul
 curl -F "file=@ssdp.txt" %1/edit
 @echo ssdp
 ping 1.1.1.1 -n 1 -w 1000 > nul
+curl -F "file=@mqtt.txt" %1/edit
+@echo mqtt
+ping 1.1.1.1 -n 1 -w 1000 > nul
 curl %1/reset
 pause

@@ -1,0 +1,7 @@
+{
+  "Base": "easyESP",
+  "Server": "test.mosquitto.org",
+  "Port": "1883",
+  "User": "",
+  "Pass": ""
+}

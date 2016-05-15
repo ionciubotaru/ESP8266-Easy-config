@@ -1,5 +1,5 @@
 # ESP8266-Easy-config
-Easy configuration web interface fost ESP8266 based on jquery mobile
+Easy configuration web interface for ESP8266 based on jquery mobile
 
 ## Minimum requirements
 * ESP8266 with 1Mb Eprom
@@ -16,7 +16,7 @@ Easy configuration web interface fost ESP8266 based on jquery mobile
 6. Open http://172.31.31.1 in your browser - default username/password is: admin/admin
 7. Goto wireless setup, select your WIFI AP name and type your password
 8. Press the commit button
-9. After reboot ESP will connect top your WIFI - check Network neighborhood to find your ESP
+9. After reboot ESP will connect to your WIFI - check Network neighborhood to find your ESP
 10. Upload new sketch using OTA
 
 ## Configuration 

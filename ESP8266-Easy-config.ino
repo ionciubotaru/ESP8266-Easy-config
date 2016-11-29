@@ -1,6 +1,6 @@
 
 /* 
- *  Tested with Arduino IDE 1.6.8
+ *  Tested with Arduino IDE 1.6.12
  * Please install the following libraries:
  * https://github.com/bblanchon/ArduinoJson
  * https://github.com/Imroy/pubsubclient
@@ -36,7 +36,7 @@ unsigned long time1=0,time2=0;
 const char* mqttUser = "";
 const char* mqttPass = "";
 
-void mPublish(String mTopic, String mPayload, int mQos=0, boolean mRetain=false);
+void mPublish(String mTopic, String mPayload, int mQos=0);
 
 void setup() {
   Serial.begin(115200);

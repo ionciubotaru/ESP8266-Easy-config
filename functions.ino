@@ -1,4 +1,4 @@
-void mPublish(String mTopic, String mPayload, int mQos=0) {
+void mPublish(String mTopic, String mPayload, int mQos) {
   if (hasMqtt) {
     Serial.println("Publish: "+mqttBase+"/"+chipId+"/"+mTopic+" ~ "+mPayload+" qos: "+String(mQos));
     mqttClient.publish(MQTT::Publish(mqttBase+"/"+chipId+"/"+mTopic, mPayload)

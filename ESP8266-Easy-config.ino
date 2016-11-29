@@ -36,6 +36,8 @@ unsigned long time1=0,time2=0;
 const char* mqttUser = "";
 const char* mqttPass = "";
 
+void mPublish(String mTopic, String mPayload, int mQos=0, boolean mRetain=false);
+
 void setup() {
   Serial.begin(115200);
 //  Serial.swap();  // uncomment if you waut to use GPIO1 and GPIO3 as INPUT/OUTPUT

@@ -1,3 +1,7 @@
+
+This software is End of Life. I moved to Sonoff-Tasmota available on https://github.com/arendst/Sonoff-Tasmota
+
+
 # ESP8266-Easy-config
 Easy configuration web interface for ESP8266 based on jquery mobile
 
